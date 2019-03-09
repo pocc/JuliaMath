@@ -45,9 +45,8 @@ module CliDerive
     end
   end
 
-  not_importing_module = (PROGRAM_FILE != "derive.jl") 
-  not_using_cli = (ARGS[1] != "derive.jl")
-  if not_importing_module || not_using_cli
+  not_importing_module = (PROGRAM_FILE == "derive.jl") 
+  if not_importing_module && isdefined(CliDerive, :ARGS) && (ARGS[1] != "derive.jl")
     println(derive(ARGS))
   end 
 end

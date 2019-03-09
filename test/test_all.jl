@@ -24,39 +24,34 @@ module TestAll
   if endswith(pwd(), "test")
     cd("..")
   end
-  test_imported_fns()
-  # rebuild_binaries_if_stale()
-  test_generated_binaries()
 
-  function test_imported_fns()
-    @test HelloWorld.hello_world() == "Hello World!"
-    @test Arithmetic.calc(["+", "2", "5"]) == 7
-    @test Arithmetic.calc(["-", "2", "5"]) == -3
-    @test Arithmetic.calc(["x", "2", "5"]) == 10
-    @test Arithmetic.calc(["/", "2", "5"]) == 0.4
-    @test CliDerive.derive(["x^3 + x*cos(x) + π", "5"]) == 75.459386652653
-    @test CliDerive.derive(["x^3 + x*cos(x) + π", "x"]) == 
-      :(3 * 1 * x ^ (3 - 1) + (1 * sin(x) + x * (1 * cos(x))))
-  end
+  @test HelloWorld.hello_world() == "Hello World!"
+  @test Arithmetic.calc(["+", "2", "5"]) == 7
+  @test Arithmetic.calc(["-", "2", "5"]) == -3
+  @test Arithmetic.calc(["x", "2", "5"]) == 10
+  @test Arithmetic.calc(["/", "2", "5"]) == 0.4
+  @test CliDerive.derive(["x^3 + x*cos(x) + π", "5"]) == 75.459386652653
+  @test CliDerive.derive(["x^3 + x*cos(x) + π", "x"]) == 
+    :(3 * 1 * x ^ (3 - 1) + (1 * sin(x) + x * (1 * cos(x))))
+    
 
-  function rebuild_binaries_if_stale()
-    # Building all requires a couple minutes per target so avoid if possible
-    # If builddir does not exist, mtime == 0
-    builddir_stale = time() - stat("builddir").mtime > 86400
-    if builddir_stale
+  # Building all requires a couple minutes per target so avoid if possible
+  # If builddir does not exist, mtime == 0
+  builddir_stale = time() - stat("builddir").mtime > 86400
+  if builddir_stale
       include("../build_all.jl")
-      @test BuildAll.build_all()
+      BuildAll.build_all()
     end
   end
 
-  function test_generated_binaries()
-    cd("builddir")
-    @test run(`./arithmetic + 2 5`) == 7
-    @test run(`./arithmetic - 2 5`) == -3
-    @test run(`./arithmetic x 2 5`) == 10
-    @test run(`./arithmetic / 2 5`) == 0.4
-    @test run(`./derive "x^3 + x*cos(x) + π" 5`) == 75.459386652653
-    @test run(`./derive "x^3 + x*cos(x) + π" x`) == 
-      :(3 * 1 * x ^ (3 - 1) + (1 * sin(x) + x * (1 * cos(x))))
+  cd("builddir")
+  @test run(`./arithmetic + 2 5`) == 7
+  @test run(`./arithmetic - 2 5`) == -3
+  @test run(`./arithmetic x 2 5`) == 10
+  @test run(`./arithmetic / 2 5`) == 0.4
+  @test run(`./derive "x^3 + x*cos(x) + π" 5`) == 75.459386652653
+  @test run(`./derive "x^3 + x*cos(x) + π" x`) == 
+    :(3 * 1 * x ^ (3 - 1) + (1 * sin(x) + x * (1 * cos(x))))
+
   end
 end
